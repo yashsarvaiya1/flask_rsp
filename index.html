@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Rock Paper Scissors Game</h1>
+
+    <button onclick="joinRoom()">Join Room</button>
+    <button onclick="playGame()">Play</button>
+
+    <div id="gameResult"></div>
+
+    <script>
+        // Connect to the Socket.IO server
+        const socket = io('https://novel-honeybee-obviously.ngrok-free.app'); // Your ngrok URL here
+
+        // Check if the socket is connected
+        socket.on('connect', function() {
+            console.log("Connected to the server");  // Ensure this is logged in the console
+        });
+
+        // Emit a message when the player joins the room
+        function joinRoom() {
+            const data = {
+                type: "join",
+                data: {
+                    username: "player1",
+                    room: "room1"
+                }
+            };
+            console.log("Emitting join event", data); // Check if this is printed when clicking the button
+            socket.emit('join', data); // Emit the join event to the server
+        }
+
+        // Emit a message when the player plays the game
+        function playGame() {
+            const data = {
+                type: "play",
+                data: {
+                    username: "player1",
+                    room: "room1",
+                    choice: "rock"  // Change this to 'rock', 'paper', or 'scissors' for different choices
+                }
+            };
+            console.log("Emitting play event", data); // Check if this is printed
+            socket.emit('play', data); // Emit the play event to the server
+        }
+
+        // Listen for messages from the server
+        socket.on('message', function (message) {
+            console.log('Message from server:', message); // Log the message from the server
+            document.getElementById("gameResult").innerHTML = message; // Display the message in the page
+        });
+    </script>
+</body>
+</html>
